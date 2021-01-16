@@ -1,10 +1,12 @@
+import os
 import discord
 import random
 from dotenv import load_dotenv
 
-# discord API
+# .env
 load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
+GUILD = os.getenv('DISCORD_GUILD')
 
 client = discord.Client()
 
@@ -16,6 +18,13 @@ END_WEIGHT = 0.45
 NUM_PLAYERS = 2
 
 colors = ["red", "black", "blue", "white", "green"]
+color_emoticon = {
+    "red": ":red_circle:",
+    "black": ":new_moon:",
+    "blue": ":blue_circle:",
+    "white": ":white_circle:",
+    "green": ":green_circle:"
+}
 keywords = {
     "red": ["knights", "goblins", "dragons", "instants", "satyrs", "warriors"],
     "black": ["deathtouch", "flying", "sacrifice", "enchantments", "graveyard", "heal", "mill", "vampire", "discard", "rogues", "knights", "zombies", "demons", "nightmare"],
@@ -27,7 +36,7 @@ keywords = {
 
 # Function to roll a deck, with suggestions and bans, for a single player
 
-def rollDeck():
+def rollDeck(user, colorblind=False):
   # Choose Colors
   player_colors = set()
   picking_colors = True
@@ -44,11 +53,11 @@ def rollDeck():
           picking_colors = False
 
   # Choose Keywords
-  player_suggestions = set()
-  while len(player_suggestions) < SUG_NUM:
-      player_suggestions.add(random.choice(keywords[random.choice(list(player_colors))]))
+  player_themes = set()
+  while len(player_themes) < SUG_NUM:
+      player_themes.add(random.choice(keywords[random.choice(list(player_colors))]))
   if random.random() < WILD_WEIGHT:
-      player_suggestions.add(random.choice(keywords["wildcard"]))
+      player_themes.add(random.choice(keywords["wildcard"]))
 
   # Choose Bans
   num_themes = 0
@@ -57,18 +66,26 @@ def rollDeck():
 
   player_bans = set()
   while len(player_bans) < BAN_NUM:
-      if num_themes == len(player_bans) + len(player_suggestions):
+      if num_themes == len(player_bans) + len(player_themes):
           break
 
       proposed_ban = random.choice(keywords[random.choice(list(player_colors))])
-      if proposed_ban not in player_suggestions:
+      if proposed_ban not in player_themes:
           player_bans.add(proposed_ban)
 
-  # TODO set user name
-  introLine = "Deck Prompt"
-  colorLine = "Colors:" + ' '.join(player_colors)
-  suggestionsLine = "Suggestions:" + ' '.join(player_suggestions)
-  banLine = "Bans:" + ' '.join(player_bans)
+  # assemble return string
+  introLine = ":crossed_swords: \n" "Deck prompt for "+ user + "\n"
+
+  colorLine = "Colors: "
+  for color in player_colors:
+    if colorblind:
+        colorLine += color + " "
+    else:
+        colorLine += color_emoticon[color] + "  "
+  colorLine += "\n"
+
+  suggestionsLine = "Themes:  " + ' '.join(player_themes) + "\n"
+  banLine = "Bans:  " + ' '.join(player_bans) + "\n"
 
   ret = introLine + colorLine + suggestionsLine + banLine
   return(ret)
@@ -79,7 +96,23 @@ async def on_message(message):
         return
 
     if message.content == '!rolldeck':
-        response = rollDeck()
+        user = str(message.author)
+        response = rollDeck(user)
         await message.channel.send(response)
+
+    if message.content == '!rolldeck-colorblind':
+        user = str(message.author)
+        response = rollDeck(user, True)
+        await message.channel.send(response)
+
+@client.event
+async def on_ready():
+    for guild in client.guilds:
+        if guild.name == GUILD:
+            print(
+                f'{client.user} is connected to the following guild:\n'
+                f'{guild.name}(id: {guild.id})'
+            )
+            break
 
 client.run(TOKEN)
