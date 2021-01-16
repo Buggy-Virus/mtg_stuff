@@ -74,7 +74,7 @@ def rollDeck(user, colorblind=False):
           player_bans.add(proposed_ban)
 
   # assemble return string
-  introLine = ":crossed_swords: \n" "Deck prompt for "+ user + "\n"
+  introLine = " <:tatas:800107201640267777> :crossed_swords:  <:tatas:800107201640267777> \n" "Deck prompt for "+ user + "\n"
 
   colorLine = "Colors: "
   for color in player_colors:
