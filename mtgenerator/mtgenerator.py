@@ -105,6 +105,22 @@ async def on_message(message):
         response = rollDeck(user, True)
         await message.channel.send(response)
 
+    if message.content == '!fierce':
+        await message.channel.send(file=discord.File("./CRITICAL_MEDIA/fierce_empath.jpg"))
+
+    if message.content == '!pounce':
+        await message.channel.send(file=discord.File("./CRITICAL_MEDIA/pouncing_shoreshark.jpg"))
+
+    if message.content == '!weasel':
+        await message.channel.send(file=discord.File("./CRITICAL_MEDIA/weaselback_redcap.png"))
+
+    if message.content == '!buggy':
+        await message.channel.send(file=discord.File("./CRITICAL_MEDIA/buggy.png"))
+
+    if message.content == '!liam':
+        await message.channel.send(file=discord.File("./CRITICAL_MEDIA/liam.jpg"))
+
+
 @client.event
 async def on_ready():
     for guild in client.guilds:
