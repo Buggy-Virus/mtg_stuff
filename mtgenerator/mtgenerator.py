@@ -120,6 +120,8 @@ async def on_message(message):
     if message.content == '!liam':
         await message.channel.send(file=discord.File("./CRITICAL_MEDIA/liam.jpg"))
 
+    if message.content == '!whey':
+        await message.channel.send(file=discord.File("./CRITICAL_MEDIA/whey.png"))
 
 @client.event
 async def on_ready():
