@@ -1,17 +1,24 @@
 import os
 import discord
-import random
 from dotenv import load_dotenv
 from gen_suggestion import suggest_deck
 
 # .env
 load_dotenv()
-TOKEN = os.getenv('DISCORD_TOKEN')
-GUILD = os.getenv('DISCORD_GUILD')
+DISCORD_TOKEN = os.getenv('DISCORD_TOKEN')
+DISCORD_GUILD = os.getenv('DISCORD_GUILD')
+
 client = discord.Client()
 
+COLOR_EMOTICONS = {
+    "red": ":red_circle:",
+    "black": ":new_moon:",
+    "blue": ":blue_circle:",
+    "white": ":white_circle:",
+    "green": ":green_circle:"
+}
 
-def rollDeck(user, args):
+async def rollDeck(message, args):
     # Parse colorblind and deck suggestion args
     colorblind = ("colorblind" in args)
 
@@ -35,24 +42,32 @@ def rollDeck(user, args):
     deck = suggest_deck(**kwargs)
 
     # Assemble return string
-    intro = ":crossed_swords: \n" "Deck prompt for "+ user + " :crossed_swords:\n"
+    user = str(message.author)
+    user = user[:user.find("#")]
+    intro = f"\n:crossed_swords: Deck Prompt For {user} :crossed_swords:\n"
 
-    colors = "Colors: "
+    colors = "Colors:  "
     for color in deck["colors"]:
         if colorblind:
             colors += f"{color} "
         else:
-            colors += f"{color_emoticon[color]}  "
+            colors += f"{COLOR_EMOTICONS[color]}  "
     colors += "\n"
 
-    themes = f"Themes:  {' '.join(deck['themes'])}\n"
-    reqs = f"Requirements:  {' '.join(deck['reqs'])}\n"
-    bans = f"Bans:  {' '.join(deck['bans'])}\n"
+    themes = f"Themes:  {', '.join(deck['themes'])}\n"
+    reqs = f"Requirements:  {', '.join(deck['reqs'])}\n"
+    bans = f"Bans:  {', '.join(deck['bans'])}\n"
 
-    return intro + colors + themes + reqs + bans
+    response = intro + colors + themes + reqs + bans
+    print(response)
+    await message.channel.send(response)
 
 
-def parse_command(message):
+async def sendImage(message, file, file_type="jpg"):
+    await message.channel.send(file=discord.File(f"./CRITICAL_MEDIA/{file}.{file_type}"))
+
+
+async def parse_command(message):
     tokens = message.content.split()
     command = tokens.pop(0)
     args_dict = {}
@@ -78,20 +93,25 @@ async def on_message(message):
     if message.content[0] != "!":
         return
 
-    command, args = parse_command(message)
+    command, args = await parse_command(message)
 
     if command == '!rolldeck':
-        user = str(message.author)
-        response = rollDeck(user, args)
-        print(response)
-        await message.channel.send(response)
+        await rollDeck(message, args)
+    elif command == '!fierce':
+        await sendImage(message, 'fierce_empath_small')
+    elif command == '!pounce':
+        await sendImage(message, 'pouncing_shoreshark_small')
+    elif command == '!redcap':
+        await sendImage(message, 'weaselback_redcap_small')
+    elif command == '!buggy':
+        await sendImage(message, 'buggy')
 
 
 @client.event
 async def on_ready():
     print(f'mtgenerator bot spinning up')
     for guild in client.guilds:
-        if guild.name == GUILD:
+        if guild.name == DISCORD_GUILD:
             print(
                 f'{client.user} is connected to the following guild:\n'
                 f'{guild.name}(id: {guild.id})'
@@ -100,7 +120,7 @@ async def on_ready():
 
 def main():
     print("running mtgenerator discord bot")
-    client.run(TOKEN)
+    client.run(DISCORD_TOKEN)
 
 if __name__ == "__main__":
     main()
