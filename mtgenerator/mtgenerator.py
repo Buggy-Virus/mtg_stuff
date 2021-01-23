@@ -1,136 +1,126 @@
 import os
 import discord
-import random
 from dotenv import load_dotenv
+from gen_suggestion import suggest_deck
 
 # .env
 load_dotenv()
-TOKEN = os.getenv('DISCORD_TOKEN')
-GUILD = os.getenv('DISCORD_GUILD')
+DISCORD_TOKEN = os.getenv('DISCORD_TOKEN')
+DISCORD_GUILD = os.getenv('DISCORD_GUILD')
 
 client = discord.Client()
 
-# Deck weights, themes, colors
-SUG_NUM = 3
-WILD_WEIGHT = 0.05
-BAN_NUM = 2
-END_WEIGHT = 0.45
-NUM_PLAYERS = 2
-
-colors = ["red", "black", "blue", "white", "green"]
-color_emoticon = {
+COLOR_EMOTICONS = {
     "red": ":red_circle:",
     "black": ":new_moon:",
     "blue": ":blue_circle:",
     "white": ":white_circle:",
     "green": ":green_circle:"
 }
-keywords = {
-    "red": ["knights", "goblins", "dragons", "instants", "satyrs", "warriors"],
-    "black": ["deathtouch", "flying", "sacrifice", "enchantments", "graveyard", "heal", "mill", "vampire", "discard", "rogues", "knights", "zombies", "demons", "nightmare"],
-    "blue": ["flying", "instants", "counter", "wizards", "rogues", "mill", "enchantments", "water", "scry"],
-    "white": ["cats", "clerics", "knights", "enchantments", "flying", "humans", "dogs", "heal", "angels"],
-    "green": ["counters", "landRamp", "spiders", "elves"],
-    "wildcard": ["artifact", "party", "landfall", "colorless", "mutate", "adventure"]
-}
 
-# Function to roll a deck, with suggestions and bans, for a single player
+async def rollDeck(message, args):
+    # Parse colorblind and deck suggestion args
+    colorblind = ("colorblind" in args)
 
-def rollDeck(user, colorblind=False):
-  # Choose Colors
-  player_colors = set()
-  picking_colors = True
-  while picking_colors:
-      cur_num = len(player_colors)
-      if cur_num == 0:
-          player_colors.add(random.choice(colors))
-      elif cur_num == 1:
-          player_colors.add(random.choice(colors))
-      elif random.random() > END_WEIGHT:
-          player_colors.add(random.choice(colors))
+    deck_args = [
+        "themes", 
+        "tribes", 
+        "mechs", 
+        "wildcards", 
+        "bans", 
+        "colors", 
+        "color_weight",
+    ]
 
-      if cur_num == len(player_colors):
-          picking_colors = False
+    kwargs = {}
+    for arg, value in args.items():
+        if arg in deck_args:
+            # assume the first value of any argument is correct
+            kwargs[arg] = value[0]
 
-  # Choose Keywords
-  player_themes = set()
-  while len(player_themes) < SUG_NUM:
-      player_themes.add(random.choice(keywords[random.choice(list(player_colors))]))
-  if random.random() < WILD_WEIGHT:
-      player_themes.add(random.choice(keywords["wildcard"]))
+    # Generate deck suggestion
+    deck = suggest_deck(**kwargs)
 
-  # Choose Bans
-  num_themes = 0
-  for color in player_colors:
-      num_themes += len(keywords[color])
+    # Assemble return string
+    user = str(message.author)
+    user = user[:user.find("#")]
+    intro = f"\n:crossed_swords: Deck Prompt For {user} :crossed_swords:\n"
 
-  player_bans = set()
-  while len(player_bans) < BAN_NUM:
-      if num_themes == len(player_bans) + len(player_themes):
-          break
+    colors = "Colors:  "
+    for color in deck["colors"]:
+        if colorblind:
+            colors += f"{color} "
+        else:
+            colors += f"{COLOR_EMOTICONS[color]}  "
+    colors += "\n"
 
-      proposed_ban = random.choice(keywords[random.choice(list(player_colors))])
-      if proposed_ban not in player_themes:
-          player_bans.add(proposed_ban)
+    themes = f"Themes:  {', '.join(deck['themes'])}\n"
+    reqs = f"Requirements:  {', '.join(deck['reqs'])}\n"
+    bans = f"Bans:  {', '.join(deck['bans'])}\n"
 
-  # assemble return string
-  introLine = " <:tatas:800107201640267777> :crossed_swords:  <:tatas:800107201640267777> \n" "Deck prompt for "+ user + "\n"
+    response = intro + colors + themes + reqs + bans
+    print(response)
+    await message.channel.send(response)
 
-  colorLine = "Colors: "
-  for color in player_colors:
-    if colorblind:
-        colorLine += color + " "
-    else:
-        colorLine += color_emoticon[color] + "  "
-  colorLine += "\n"
 
-  suggestionsLine = "Themes:  " + ' '.join(player_themes) + "\n"
-  banLine = "Bans:  " + ' '.join(player_bans) + "\n"
+async def sendImage(message, file, file_type="jpg"):
+    await message.channel.send(file=discord.File(f"./CRITICAL_MEDIA/{file}.{file_type}"))
 
-  ret = introLine + colorLine + suggestionsLine + banLine
-  return(ret)
+
+async def parse_command(message):
+    tokens = message.content.split()
+    command = tokens.pop(0)
+    args_dict = {}
+    cur_arg = None
+    for token in tokens:
+        if token[:2] == "--":
+            cur_arg = token[2:]
+            args_dict[cur_arg] = []
+        elif cur_arg is not None:
+            args_dict[cur_arg].append(token)
+        else:
+            arg_error = {f"malformed command, \"{message.content}\", expected first argument beginning with \"--\", got {token}"}
+            print(arg_error)
+            await message.channel.send(arg_error)
+    return command, args_dict
+
 
 @client.event
 async def on_message(message):
     if message.author == client.user:
         return
+    
+    if message.content[0] != "!":
+        return
 
-    if message.content == '!rolldeck':
-        user = str(message.author)
-        response = rollDeck(user)
-        await message.channel.send(response)
+    command, args = await parse_command(message)
 
-    if message.content == '!rolldeck-colorblind':
-        user = str(message.author)
-        response = rollDeck(user, True)
-        await message.channel.send(response)
+    if command == '!rolldeck':
+        await rollDeck(message, args)
+    elif command == '!fierce':
+        await sendImage(message, 'fierce_empath_small')
+    elif command == '!pounce':
+        await sendImage(message, 'pouncing_shoreshark_small')
+    elif command == '!redcap':
+        await sendImage(message, 'weaselback_redcap_small')
+    elif command == '!buggy':
+        await sendImage(message, 'buggy')
 
-    if message.content == '!fierce':
-        await message.channel.send(file=discord.File("./CRITICAL_MEDIA/fierce_empath.jpg"))
-
-    if message.content == '!pounce':
-        await message.channel.send(file=discord.File("./CRITICAL_MEDIA/pouncing_shoreshark.jpg"))
-
-    if message.content == '!weasel':
-        await message.channel.send(file=discord.File("./CRITICAL_MEDIA/weaselback_redcap.png"))
-
-    if message.content == '!buggy':
-        await message.channel.send(file=discord.File("./CRITICAL_MEDIA/buggy.png"))
-
-    if message.content == '!liam':
-        await message.channel.send(file=discord.File("./CRITICAL_MEDIA/liam.jpg"))
-
-    if message.content == '!whey':
-        await message.channel.send(file=discord.File("./CRITICAL_MEDIA/whey.png"))
 
 @client.event
 async def on_ready():
+    print(f'mtgenerator bot spinning up')
     for guild in client.guilds:
-        if guild.name == GUILD:
+        if guild.name == DISCORD_GUILD:
             print(
                 f'{client.user} is connected to the following guild:\n'
                 f'{guild.name}(id: {guild.id})'
             )
             break
 
-client.run(TOKEN)
+def main():
+    print("running mtgenerator discord bot")
+    client.run(DISCORD_TOKEN)
+
+if __name__ == "__main__":
+    main()
