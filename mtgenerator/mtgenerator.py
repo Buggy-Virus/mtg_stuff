@@ -74,7 +74,7 @@ def rollDeck(user, colorblind=False):
           player_bans.add(proposed_ban)
 
   # assemble return string
-  introLine = ":crossed_swords: \n" "Deck prompt for "+ user + "\n"
+  introLine = " <:tatas:800107201640267777> :crossed_swords:  <:tatas:800107201640267777> \n" "Deck prompt for "+ user + "\n"
 
   colorLine = "Colors: "
   for color in player_colors:
@@ -104,6 +104,24 @@ async def on_message(message):
         user = str(message.author)
         response = rollDeck(user, True)
         await message.channel.send(response)
+
+    if message.content == '!fierce':
+        await message.channel.send(file=discord.File("./CRITICAL_MEDIA/fierce_empath.jpg"))
+
+    if message.content == '!pounce':
+        await message.channel.send(file=discord.File("./CRITICAL_MEDIA/pouncing_shoreshark.jpg"))
+
+    if message.content == '!weasel':
+        await message.channel.send(file=discord.File("./CRITICAL_MEDIA/weaselback_redcap.png"))
+
+    if message.content == '!buggy':
+        await message.channel.send(file=discord.File("./CRITICAL_MEDIA/buggy.png"))
+
+    if message.content == '!liam':
+        await message.channel.send(file=discord.File("./CRITICAL_MEDIA/liam.jpg"))
+
+    if message.content == '!whey':
+        await message.channel.send(file=discord.File("./CRITICAL_MEDIA/whey.png"))
 
 @client.event
 async def on_ready():
