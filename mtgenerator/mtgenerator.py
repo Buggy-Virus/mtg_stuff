@@ -15,11 +15,11 @@ DISCORD_GUILD = os.getenv('DISCORD_GUILD')
 client = discord.Client()
 
 COLOR_EMOTICONS = {
-    "red": ":red_circle:",
-    "black": ":new_moon:",
-    "blue": ":blue_circle:",
-    "white": ":white_circle:",
-    "green": ":green_circle:"
+    "Red": ":red_circle:",
+    "Black": ":new_moon:",
+    "Blue": ":blue_circle:",
+    "White": ":white_circle:",
+    "Green": ":green_circle:"
 }
 
 MOST_RECENT_DECKS = {}
@@ -72,6 +72,18 @@ async def rollDeck(message, args):
 
 async def sendImage(message, file, file_type="jpg"):
     await message.channel.send(file=discord.File(f"./CRITICAL_MEDIA/{file}.{file_type}"))
+
+async def fierceImage(message, args):
+    await sendImage(message, 'fierce_empath_small')
+
+async def pounceImage(message, args):
+    await sendImage(message, 'pouncing_shoreshark_small')
+
+async def redcapImage(message, args):
+    await sendImage(message, 'weaselback_redcap_small')
+
+async def buggyImage(message, args):
+    await sendImage(message, 'buggy')
 
 
 async def recordMatch(message, args):
@@ -140,7 +152,8 @@ async def recordMatch(message, args):
         f" Way to play those scorpions {winner}!",
         f" {winner} is the wizard supreme!",
         f" {winner} drew too many cards!",
-        f" Great deck building {winner}!"
+        f" Great deck building {winner}!",
+        f"You really walked those planes {winner}!"
     ]
     if loser != "unlisted":
         additions += [
@@ -213,22 +226,19 @@ async def on_message(message):
     if message.content[0] != "!":
         return
 
-    command, args = await parse_command(message)
+    commands = {
+        "!rolldeck": rollDeck,
+        "!checkmate": recordMatch,
+        "!wins": showWins,
+        "!fierce": fierceImage,
+        "!pounce": pounceImage,
+        "!redcap": redcapImage,
+        "!buggy": buggyImage
+    }
 
-    if command == '!rolldeck':
-        await rollDeck(message, args)
-    elif command == "!checkmate":
-        await recordMatch(message, args)
-    elif command == "!wins":
-        await showWins(message, args)
-    elif command == '!fierce':
-        await sendImage(message, 'fierce_empath_small')
-    elif command == '!pounce':
-        await sendImage(message, 'pouncing_shoreshark_small')
-    elif command == '!redcap':
-        await sendImage(message, 'weaselback_redcap_small')
-    elif command == '!buggy':
-        await sendImage(message, 'buggy')
+    if message.content.split()[0] in commands:
+        command, args = await parse_command(message)
+        await commands[command](message, args)
 
 
 @client.event
