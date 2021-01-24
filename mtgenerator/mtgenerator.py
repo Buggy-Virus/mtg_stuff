@@ -3,6 +3,7 @@ import os
 import sys
 import discord
 import random
+from docs import *
 from datetime import datetime
 from dotenv import load_dotenv
 from gen_suggestion import suggest_deck
@@ -25,16 +26,22 @@ COLOR_EMOTICONS = {
 MOST_RECENT_DECKS = {}
 
 async def rollDeck(message, args):
+
+    if "help" in args:
+        response = docs_mtgenerator
+        await message.channel.send(response)
+        return
+
     # Parse colorblind and deck suggestion args
     colorblind = ("colorblind" in args)
 
     deck_args = [
-        "themes", 
-        "tribes", 
-        "mechs", 
-        "wildcards", 
-        "bans", 
-        "colors", 
+        "themes",
+        "tribes",
+        "mechs",
+        "wildcards",
+        "bans",
+        "colors",
         "color_weight",
     ]
 
@@ -75,6 +82,11 @@ async def sendImage(message, file, file_type="jpg"):
 
 
 async def recordMatch(message, args):
+    if "help" in args:
+        response = docs_checkmate
+        await message.channel.send(response)
+        return
+
     if "winner" in args:
         winner = ' '.join(args["winner"])
     else:
@@ -155,6 +167,11 @@ async def recordMatch(message, args):
     await message.channel.send(response)
 
 async def showWins(message, args):
+    if "help" in args:
+        response = docs_wins
+        await message.channel.send(response)
+        return
+
     if "player" in args:
         player = ' '.join(args["player"])
     else:
@@ -186,6 +203,10 @@ async def showWins(message, args):
     print(response)
     await message.channel.send(response)
 
+async def help_docs(message):
+    response = docs_main
+    await message.channel.send(response)
+
 async def parse_command(message):
     print(f"Incoming command: \"{message.content}\"")
     tokens = message.content.split()
@@ -209,18 +230,20 @@ async def parse_command(message):
 async def on_message(message):
     if message.author == client.user:
         return
-    
+
     if message.content[0] != "!":
         return
 
     command, args = await parse_command(message)
 
-    if command == '!rolldeck':
+    if command == '!mtgenerator':
         await rollDeck(message, args)
     elif command == "!checkmate":
         await recordMatch(message, args)
     elif command == "!wins":
         await showWins(message, args)
+    elif command == '!mtghelp':
+        await help_docs(message)
     elif command == '!fierce':
         await sendImage(message, 'fierce_empath_small')
     elif command == '!pounce':

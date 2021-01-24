@@ -63,12 +63,12 @@ def suggest_deck(themes=THEME_NUM, tribes=TRIBE_NUM, mechs=MECH_NUM, wildcards=W
             rel_tribes.remove(wildcard)
         elif wildcard in rel_mechs:
             rel_mechs.remove(wildcard)
-        
+
         if wildcard in rel_wild:
             rel_wild.remove(wildcard)
 
     deck_requirements = deck_tribes + deck_mechs + deck_wildcards
-            
+
     # Choose Bans
     deck_bans = r.sample(rel_tribes + rel_mechs + rel_wild, bans)
 
@@ -77,7 +77,7 @@ def suggest_deck(themes=THEME_NUM, tribes=TRIBE_NUM, mechs=MECH_NUM, wildcards=W
         "colors": deck_colors,
         "themes": deck_themes,
         "reqs": deck_requirements,
-        "bans": deck_bans 
+        "bans": deck_bans
     }
 
 def main():
