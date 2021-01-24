@@ -9,26 +9,36 @@ WILD_NUM = 3
 BAN_NUM = 5
 END_WEIGHT = 0.25
 
-COLORS = ["red", "black", "blue", "white", "green"]
+COLORS = ["Red", "Black", "Blue", "White", "Green"]
 
 TRIBES = {
-    "red": ["knights", "goblins", "dragons", "satyrs", "warriors", "dwarves", "dogs", "firey"],
-    "black": ["vampire", "rogues", "knights", "zombies", "demons", "nightmare", "snakes", "swampy"],
-    "blue": ["wizards", "rogues", "artifacts", "birds", "merfolk", "sphinx", "watery"],
-    "white": ["cats", "clerics", "knights", "humans", "dogs", "angels", "soldiers", "warriors", "kor"],
-    "green": ["spiders", "elves", "dinosaurs", "elementals", "beasts", "animals", "insects", "plants", "serpents"],
+    "Red": ["Knights", "Goblins", "Dragons", "Satyrs", "Warriors", "Dwarves", "Dogs", "Firey"],
+    "Black": ["Vampire", "Rogues", "Knights", "Zombies", "Demons", "Nightmare", "Snakes", "Swampy"],
+    "Blue": ["Wizards", "Rogues", "Artifacts", "Birds", "Merfolk", "Sphinx", "Watery"],
+    "White": ["Cats", "Clerics", "Knights", "Humans", "Dogs", "Angels", "Soldiers", "Warriors", "Kor"],
+    "Green": ["Spiders", "Elves", "Dinosaurs", "Elementals", "Beasts", "Animals", "Insects", "Plants", "Serpents"],
 }
 
 MECHANICS = {
-    "red": ["instants", "discard", "sacrifice", "equipment", "burn", "landfall", "conversion"],
-    "black": ["deathtouch", "flying", "sacrifice", "enchantments", "graveyard", "heal", "mill", "discard", "removal"],
-    "blue": ["flying", "instants", "counter", "mill", "enchantments", "scry"],
-    "white": ["enchantments", "flying", "heal", "equipment", "landfall"],
-    "green": ["counters", "ramp", "landfall", "food"],
-    "wild": ["artifacts", "party", "mutate", "adventure", "sagas", "gods"]
+    "Red": ["Instants", "Discard", "Sacrifice", "Equipment", "Burn", "Landfall", "Conversion"],
+    "Black": ["Deathtouch", "Flying", "Sacrifice", "Enchantments", "Graveyard", "Heal", "Mill", "Discard", "Removal"],
+    "Blue": ["Flying", "Instants", "Counter", "Mill", "Enchantments", "Scry"],
+    "White": ["Enchantments", "Flying", "Heal", "Equipment", "Landfall"],
+    "Green": ["Counters", "Ramp", "Landfall", "Food"],
+    "Wild": ["Artifacts", "Party", "Mutate", "Adventure", "Sagas", "Gods"]
 }
 
 def suggest_deck(themes=THEME_NUM, tribes=TRIBE_NUM, mechs=MECH_NUM, wildcards=WILD_NUM, bans=BAN_NUM, colors=None, color_weight=END_WEIGHT):
+    # Converts str input to int
+    themes = int(themes)
+    tribes = int(tribes)
+    mechs = int(mechs)
+    wildcards = int(wildcards)
+    bans = int(bans)
+    if colors is not None:
+        colors = int(colors)
+    color_weight = float(color_weight)
+
     # Choose Colors
     if colors is None:
         colors = 1
@@ -39,7 +49,7 @@ def suggest_deck(themes=THEME_NUM, tribes=TRIBE_NUM, mechs=MECH_NUM, wildcards=W
     # Build Tribe/Mech Lists
     rel_tribes = []
     rel_mechs = []
-    rel_wild = MECHANICS["wild"]
+    rel_wild = MECHANICS["Wild"]
     for color in deck_colors:
         rel_tribes += TRIBES[color]
         rel_mechs += MECHANICS[color]
