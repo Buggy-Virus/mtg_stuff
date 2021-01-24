@@ -1,5 +1,6 @@
 import csv
 import os
+import sys
 import discord
 import random
 from datetime import datetime
@@ -108,7 +109,6 @@ async def recordMatch(message, args):
         bans_2 = "not_recorded"
 
     match_record = {
-        "winner": winner,
         "date": datetime.today().strftime('%Y%m%d'),
         "time": datetime.today().strftime('%H%M%S'),
         "player_1": winner,
@@ -120,29 +120,37 @@ async def recordMatch(message, args):
         "colors_2": colors_2,
         "themes_2": themes_2,
         "reqs_2": reqs_2,
-        "bans_2": bans_2
+        "bans_2": bans_2,
+        "winner": winner
     }
 
-    with open(r'matches.csv', 'a', newline='') as csvfile:
+    with open(os.path.join(sys.path[0], "matches.csv"), 'a', newline='') as csvfile:
         fieldnames = match_record.keys()
         writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
         writer.writerow(match_record)
 
-    response = f"Recording match between {winner} and {loser}. {winner} won!"
+    if loser != "unlisted":
+        response = f"Recording match between {winner} and {loser}. {winner} won!"
+    else:
+        response = f"Recording a win for {winner}!"
+
     additions = [
-        f"\nNice going {winner}!",
-        f"\nWay to drop those lands {winner}!",
-        f"\nWay to play those scorpions {winner}!",
-        f"\n{winner} is the wizard supreme!",
-        f"\n{winner} drew too many cards!",
-        f"\nGreat deck building {winner}!",
-        f"\nMaybe play more land ramp next time {loser}!",
-        f"\nTime to go tweak your deck {loser}!",
-        f"\nYou'll get 'em next time {loser}!",
-        f"\nMaybe play less scorpions {loser}!",
-        f"\nAll of {loser}'s creatured got removed!",
-        f"\nNice try {loser}!",
+        f" Nice going {winner}!",
+        f" Way to drop those lands {winner}!",
+        f" Way to play those scorpions {winner}!",
+        f" {winner} is the wizard supreme!",
+        f" {winner} drew too many cards!",
+        f" Great deck building {winner}!"
     ]
+    if loser != "unlisted":
+        additions += [
+            f" Maybe play more land ramp next time {loser}!",
+            f" Time to go tweak your deck {loser}!",
+            f" You'll get 'em next time {loser}!",
+            f" Maybe play less scorpions {loser}!",
+            f" All of {loser}'s creatured got removed!",
+            f" Nice try {loser}!",
+        ]
     response += random.choice(additions)
     await message.channel.send(response)
 
@@ -161,9 +169,10 @@ async def showWins(message, args):
     wins = 0
     losses = 0
 
-    with open('matches.csv', newline='') as csvfile:
+    with open(os.path.join(sys.path[0], "matches.csv"), newline='') as csvfile:
         reader = csv.DictReader(csvfile)
         for match in reader:
+            print(match)
             if player == match["winner"] and (opponent is None or opponent in [match["player_1"], match["player_2"]]):
                 wins += 1
 
