@@ -57,7 +57,7 @@ async def rollDeck(message, args):
     # Assemble return string
     intro = f"\n:crossed_swords: **Deck Prompt For {user}** :crossed_swords:\n"
 
-    colors = "Colors:  "
+    colors = "Colors:   "
     for color in deck["colors"]:
         if colorblind:
             colors += f"{color} "
@@ -65,9 +65,9 @@ async def rollDeck(message, args):
             colors += f"{COLOR_EMOTICONS[color]}  "
     colors += "\n"
 
-    themes = f"Themes:  {', '.join(deck['themes'])}\n"
-    reqs = f"Requirements:  {', '.join(deck['reqs'])}\n"
-    bans = f"Bans:  {', '.join(deck['bans'])}\n"
+    themes = f"Themes:   {', '.join(deck['themes'])}\n"
+    reqs   = f"Require:  {', '.join(deck['reqs'])}\n"
+    bans   = f"Bans:     {', '.join(deck['bans'])}\n"
 
     response = f"{intro}```{colors}{themes}{reqs}{bans}```"
     print(response)
