@@ -5,8 +5,8 @@ import math as m
 THEME_NUM = 1
 TRIBE_NUM = 1
 MECH_NUM = 1
-WILD_NUM = 3
-BAN_NUM = 5
+WILD_NUM = 1
+BAN_NUM = 4
 END_WEIGHT = 0.25
 
 COLORS = ["Red", "Black", "Blue", "White", "Green"]
