@@ -1,6 +1,7 @@
 import argparse
 import random as r
 import math as m
+import exp_themes
 
 THEME_NUM = 1
 TRIBE_NUM = 1
@@ -11,24 +12,41 @@ END_WEIGHT = 0.25
 
 COLORS = ["Red", "Black", "Blue", "White", "Green"]
 
-TRIBES = {
-    "Red": ["Knights", "Goblins", "Dragons", "Satyrs", "Warriors", "Dwarves", "Dogs", "Firey"],
-    "Black": ["Vampire", "Rogues", "Knights", "Zombies", "Demons", "Nightmare", "Snakes", "Swampy"],
-    "Blue": ["Wizards", "Rogues", "Artifacts", "Birds", "Merfolk", "Sphinx", "Watery"],
-    "White": ["Cats", "Clerics", "Knights", "Humans", "Dogs", "Angels", "Soldiers", "Warriors", "Kor"],
-    "Green": ["Spiders", "Elves", "Dinosaurs", "Elementals", "Beasts", "Animals", "Insects", "Plants", "Serpents"],
-}
+STANDARD = [
+    "Kaldheim",
+    "Evergreen",
+]
 
-MECHANICS = {
-    "Red": ["Instants", "Discard", "Sacrifice", "Equipment", "Burn", "Landfall", "Conversion"],
-    "Black": ["Deathtouch", "Flying", "Sacrifice", "Enchantments", "Graveyard", "Heal", "Mill", "Discard", "Removal"],
-    "Blue": ["Flying", "Instants", "Counter", "Mill", "Enchantments", "Scry"],
-    "White": ["Enchantments", "Flying", "Heal", "Equipment", "Landfall"],
-    "Green": ["Counters", "Ramp", "Landfall", "Food"],
-    "Wild": ["Artifacts", "Party", "Mutate", "Adventure", "Sagas", "Gods"]
-}
+def get_themes(exps):
+    tribes = {}
+    mechs = {}
 
-def suggest_deck(themes=THEME_NUM, tribes=TRIBE_NUM, mechs=MECH_NUM, wildcards=WILD_NUM, bans=BAN_NUM, colors=None, color_weight=END_WEIGHT):
+    for color in COLORS:
+        tribes[color] = set()
+        mechs[color] = set()
+
+    for exp in exps:
+        for color in COLORS:
+            tribes[color] = tribes[color] | set(exp_themes.themes[exp]["tribes"][color])
+            mechs[color] = mechs[color] | set(exp_themes.themes[exp]["mechs"][color])
+        mechs["Wild"] = mechs["Wild"] | set(exp_themes.themes[exp]["mechs"]["Wild"])
+
+    for color in COLORS:
+        tribes[color] = list(tribes[color])
+        mechs[color] = list(mechs[color])
+
+    return tribes, mechs
+
+def suggest_deck(
+    themes=THEME_NUM,
+    tribes=TRIBE_NUM,
+    mechs=MECH_NUM,
+    wildcards=WILD_NUM,
+    bans=BAN_NUM,
+    colors=None,
+    color_weight=END_WEIGHT,
+    expansions=STANDARD,
+):
     # Converts str input to int
     themes = int(themes)
     tribes = int(tribes)
@@ -47,12 +65,14 @@ def suggest_deck(themes=THEME_NUM, tribes=TRIBE_NUM, mechs=MECH_NUM, wildcards=W
     deck_colors = r.sample(COLORS, colors)
 
     # Build Tribe/Mech Lists
+    exp_tribes, exp_mechs = get_themes(expansions)
+
     rel_tribes = []
     rel_mechs = []
-    rel_wild = MECHANICS["Wild"]
+    rel_wild = exp_mechs["Wild"]
     for color in deck_colors:
-        rel_tribes += TRIBES[color]
-        rel_mechs += MECHANICS[color]
+        rel_tribes += exp_tribes[color]
+        rel_mechs += exp_mechs[color]
 
     # Choose Themes
     deck_themes = r.sample(rel_tribes + rel_mechs, themes)
