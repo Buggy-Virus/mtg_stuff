@@ -26,10 +26,9 @@ def get_themes(exps):
         mechs[color] = set()
 
     for exp in exps:
-        for color in COLORS:
+        for color in COLORS + ["Wild"]:
             tribes[color] = tribes[color] | set(exp_themes.themes[exp]["tribes"][color])
             mechs[color] = mechs[color] | set(exp_themes.themes[exp]["mechs"][color])
-        mechs["Wild"] = mechs["Wild"] | set(exp_themes.themes[exp]["mechs"]["Wild"])
 
     for color in COLORS:
         tribes[color] = list(tribes[color])
@@ -69,7 +68,7 @@ def suggest_deck(
 
     rel_tribes = []
     rel_mechs = []
-    rel_wild = exp_mechs["Wild"]
+    rel_wild = exp_tribes["Wild"] + exp_mechs["Wild"]
     for color in deck_colors:
         rel_tribes += exp_tribes[color]
         rel_mechs += exp_mechs[color]

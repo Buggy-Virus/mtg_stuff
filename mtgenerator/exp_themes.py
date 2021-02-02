@@ -1,18 +1,19 @@
 KALDHEIM_TRIBES = {
-    "Red": [],
-    "Black": [],
-    "Blue": [],
-    "White": [],
-    "Green": [],
+    "Red": ["Giants", "Berserkers", "Dwarves", "Dragons"],
+    "Black": ["Berserkers", "Elves", "Angels", "Zombies", "Demons"],
+    "Blue": ["Shapeshifts", "Giants", "Wizrds", "Birds"],
+    "White": ["Spirit", "Angel", "Warriors", "Humans", "Clerics"],
+    "Green": ["Elf", "Shapeshifter", "Snow", "Mammals", "Trolls", "Warriors"],
+    "Wild": ["Vehicles", "Snow"]
 }
 
 KALDHEIM_MECHANICS = {
-    "Red": [],
-    "Black": [],
-    "Blue": [],
-    "White": [],
-    "Green": [],
-    "Wild": []
+    "Red": ["Boast", "Exile", "Haste", "Burn", "Instants", "Equipment"],
+    "Black": ["Sacrifice", "discard", "mill"],
+    "Blue": ["Counter", "Flash", "Flying", "Copy", "Foretell", "Scry"],
+    "White": ["Second", "Heal", "Exile", "Boast", "Runes", "Flying"],
+    "Green": ["Deathtouch", "Counters"],
+    "Wild": ["God", "Artifacts", "Runes"]
 }
 
 EVERGREEN_TRIBES = {
@@ -21,13 +22,14 @@ EVERGREEN_TRIBES = {
     "Blue": ["Wizards", "Rogues", "Artifacts", "Birds", "Merfolk", "Sphinx", "Watery"],
     "White": ["Cats", "Clerics", "Knights", "Humans", "Dogs", "Angels", "Soldiers", "Warriors", "Kor"],
     "Green": ["Spiders", "Elves", "Dinosaurs", "Elementals", "Beasts", "Animals", "Insects", "Plants", "Serpents"],
+    "Wild": []
 }
 
 EVERGREEN_MECHANICS = {
     "Red": ["Instants", "Discard", "Sacrifice", "Equipment", "Burn", "Landfall", "Conversion"],
-    "Black": ["Deathtouch", "Flying", "Sacrifice", "Enchantments", "Graveyard", "Heal", "Mill", "Discard", "Removal"],
-    "Blue": ["Flying", "Instants", "Counter", "Mill", "Enchantments", "Scry"],
-    "White": ["Enchantments", "Flying", "Heal", "Equipment", "Landfall"],
+    "Black": ["Deathtouch", "Flying", "Sacrifice", "Enchantments", "Graveyard", "Heal", "Mill", "Discard", "Destroy"],
+    "Blue": ["Flying", "Instants", "Counter", "Mill", "Enchantments", "Scry", "Tap"],
+    "White": ["Enchantments", "Flying", "Heal", "Equipment", "Landfall", "Exile"],
     "Green": ["Counters", "Ramp", "Landfall", "Food"],
     "Wild": ["Artifacts", "Party", "Mutate", "Adventure", "Sagas", "Gods"]
 }
