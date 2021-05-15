@@ -21,7 +21,7 @@ def get_themes(exps):
     tribes = {}
     mechs = {}
 
-    for color in COLORS:
+    for color in COLORS + ["Wild"]:
         tribes[color] = set()
         mechs[color] = set()
 
@@ -30,11 +30,19 @@ def get_themes(exps):
             tribes[color] = tribes[color] | set(exp_themes.themes[exp]["tribes"][color])
             mechs[color] = mechs[color] | set(exp_themes.themes[exp]["mechs"][color])
 
-    for color in COLORS:
+    for color in COLORS + ["Wild"]:
         tribes[color] = list(tribes[color])
         mechs[color] = list(mechs[color])
 
     return tribes, mechs
+
+def remove_from(remove_list, *mutable_lists):
+    for mutable_list in mutable_lists:
+        for element in remove_list:
+            if element in mutable_list:
+                mutable_list.remove(element)
+
+    return mutable_lists
 
 def suggest_deck(
     themes=THEME_NUM,
@@ -75,26 +83,15 @@ def suggest_deck(
 
     # Choose Themes
     deck_themes = r.sample(rel_tribes + rel_mechs, themes)
-    for theme in deck_themes:
-        if theme in rel_tribes:
-            rel_tribes.remove(theme)
-        else:
-            rel_mechs.remove(theme)
+    rel_tribes, rel_mechs, rel_wild = remove_from(deck_themes, rel_tribes, rel_mechs, rel_wild)
 
     # Choose requirements
     deck_tribes = r.sample(rel_tribes, tribes)
-    rel_tribes = [tribe for tribe in rel_tribes if tribe not in deck_tribes]
+    rel_tribes, rel_mechs, rel_wild = remove_from(deck_tribes, rel_tribes, rel_mechs, rel_wild)
     deck_mechs = r.sample(rel_mechs, mechs)
-    rel_mechs = [mech for mech in rel_mechs if mech not in deck_mechs]
+    rel_tribes, rel_mechs, rel_wild = remove_from(deck_mechs, rel_tribes, rel_mechs, rel_wild)
     deck_wildcards = r.sample(rel_tribes + rel_mechs + rel_wild, wildcards)
-    for wildcard in deck_wildcards:
-        if wildcard in rel_tribes:
-            rel_tribes.remove(wildcard)
-        elif wildcard in rel_mechs:
-            rel_mechs.remove(wildcard)
-        
-        if wildcard in rel_wild:
-            rel_wild.remove(wildcard)
+    rel_tribes, rel_mechs, rel_wild = remove_from(deck_wildcards, rel_tribes, rel_mechs, rel_wild)
 
     deck_requirements = deck_tribes + deck_mechs + deck_wildcards
             

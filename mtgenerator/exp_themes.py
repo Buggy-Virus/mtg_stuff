@@ -1,9 +1,9 @@
 KALDHEIM_TRIBES = {
     "Red": ["Giants", "Berserkers", "Dwarves", "Dragons"],
     "Black": ["Berserkers", "Elves", "Angels", "Zombies", "Demons"],
-    "Blue": ["Shapeshifts", "Giants", "Wizrds", "Birds"],
+    "Blue": ["Shapeshifters", "Giants", "Wizards", "Birds"],
     "White": ["Spirit", "Angel", "Warriors", "Humans", "Clerics"],
-    "Green": ["Elf", "Shapeshifter", "Snow", "Mammals", "Trolls", "Warriors"],
+    "Green": ["Elf", "Shapeshifters", "Snow", "Mammals", "Trolls", "Warriors"],
     "Wild": ["Vehicles", "Snow"]
 }
 
@@ -11,7 +11,7 @@ KALDHEIM_MECHANICS = {
     "Red": ["Boast", "Exile", "Haste", "Burn", "Instants", "Equipment"],
     "Black": ["Sacrifice", "discard", "mill"],
     "Blue": ["Counter", "Flash", "Flying", "Copy", "Foretell", "Scry"],
-    "White": ["Second", "Heal", "Exile", "Boast", "Runes", "Flying"],
+    "White": ["Second Spell", "Heal", "Exile", "Boast", "Runes", "Flying"],
     "Green": ["Deathtouch", "Counters"],
     "Wild": ["God", "Artifacts", "Runes"]
 }
@@ -21,7 +21,7 @@ EVERGREEN_TRIBES = {
     "Black": ["Vampire", "Rogues", "Knights", "Zombies", "Demons", "Nightmare", "Snakes", "Swampy"],
     "Blue": ["Wizards", "Rogues", "Artifacts", "Birds", "Merfolk", "Sphinx", "Watery"],
     "White": ["Cats", "Clerics", "Knights", "Humans", "Dogs", "Angels", "Soldiers", "Warriors", "Kor"],
-    "Green": ["Spiders", "Elves", "Dinosaurs", "Elementals", "Beasts", "Animals", "Insects", "Plants", "Serpents"],
+    "Green": ["Spiders", "Elves", "Dinosaurs", "Elementals", "Beasts", "Insects", "Plants", "Serpents", "Mammals"],
     "Wild": []
 }
 
