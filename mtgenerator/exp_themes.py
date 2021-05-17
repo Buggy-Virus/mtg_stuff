@@ -53,7 +53,7 @@ EVERGREEN_MECHANICS = {
 }
 
 themes = {
-    "Strixhaven": {"tribes": STRIXHAVEN_TRIBES, "mechs": STRIXHAVE_MECHANICS},
+    "Strixhaven": {"tribes": STRIXHAVEN_TRIBES, "mechs": STRIXHAVEN_MECHANICS},
     "Kaldheim": {"tribes": KALDHEIM_TRIBES, "mechs": KALDHEIM_MECHANICS},
     "Evergreen": {"tribes": EVERGREEN_TRIBES, "mechs": EVERGREEN_MECHANICS},
 }
