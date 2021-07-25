@@ -33,12 +33,12 @@ async def rollDeck(message, args):
     colorblind = True
 
     deck_args = [
-        "themes", 
-        "tribes", 
-        "mechs", 
-        "wildcards", 
-        "bans", 
-        "colors", 
+        "themes",
+        "tribes",
+        "mechs",
+        "wildcards",
+        "bans",
+        "colors",
         "color_weight",
     ]
 
@@ -87,6 +87,8 @@ async def redcapImage(message, args):
 async def buggyImage(message, args):
     await sendImage(message, 'buggy')
 
+async def sphinxGif(message, args):
+    await sendImage(message, 'sphinxwinz', file_type="gif")
 
 async def recordMatch(message, args):
     if "winner" in args:
@@ -227,7 +229,7 @@ async def parse_command(message):
 async def on_message(message):
     if message.author == client.user:
         return
-    
+
     if message.content[0] != "!":
         return
 
@@ -239,7 +241,8 @@ async def on_message(message):
         "!fierce": fierceImage,
         "!pounce": pounceImage,
         "!redcap": redcapImage,
-        "!buggy": buggyImage
+        "!buggy": buggyImage,
+        "!sphinx": sphinxGif
     }
 
     if message.content.split()[0] in commands:
